@@ -1,1 +1,48 @@
-https://colab.research.google.com/drive/1o51IDJ2yakUKT8SwOlyuqyTlyiWErUWl#scrollTo=w-_GxwCW-m3c&line=5&uniqifier=1
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Load your CSV file
+file_path = "/content/output_table.csv"
+df = pd.read_csv(file_path)
+
+# Preview columns (optional)
+print("Columns in dataset:", df.columns)
+
+# Assuming column names (adjust if needed)
+# Example: 'School_Name' and 'DN'
+school_col = 'NAME'   # change if different
+dn_col = 'DN'                # change if different
+
+# -------------------------------
+# 1. Group schools by DN value
+# -------------------------------
+grouped = df.groupby(dn_col)[school_col].apply(list)
+
+print("\nSchools in each DN value:\n")
+for dn, schools in grouped.items():
+    print(f"DN Value {dn}:")
+    for s in schools:
+        print(f"  - {s}")
+    print()
+
+# -------------------------------
+# 2. Count number of schools per DN
+# -------------------------------
+count_df = df.groupby(dn_col)[school_col].count().reset_index()
+count_df.columns = [dn_col, 'Number_of_Schools']
+
+print("\nTable: Number of schools per DN value\n")
+print(count_df)
+
+# -------------------------------
+# 3. Plot Bar Chart
+# -------------------------------
+plt.figure()
+plt.bar(count_df[dn_col], count_df['Number_of_Schools'])
+
+plt.xlabel("DN Value")
+plt.ylabel("Number of Schools")
+plt.title("Schools Distribution by DN Value")
+
+plt.xticks(count_df[dn_col])
+plt.show()
